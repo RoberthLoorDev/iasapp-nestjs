@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelos de tu aplicación
+// ---
+
+model Business {
+  id                  String  @id @default(uuid()) @map("id")
+  name                String
+  email               String  @unique
+  password            String
+  firstName           String? @map("first_name")
+  lastName            String? @map("last_name")
+  address             String?
+  phoneNumber         String? @map("phone_number")
+  whatsappPhoneNumber String? @unique @map("whatsapp_phone_number")
+  whatsappApiConfig   Json?   @map("whatsapp_api_config") // jsonb en PostgreSQL
+  isEmailVerified     Boolean @default(false) @map("is_email_verified")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  products      Product[]
+  messages      Message[]
+  conversations Conversation[]
+
+  @@map("businesses") // Mapea este modelo a la tabla 'businesses' en la DB
+}
+
+model Product {
+  id            String  @id @default(uuid()) @map("id")
+  businessId    String  @map("business_id")
+  brand         String
+  model         String
+  variant       String?
+  ram           String
+  storage       String
+  processor     String?
+  display       String?
+  mainCameraMp  Int?    @map("main_camera_mp")
+  frontCameraMp Int?    @map("front_camera_mp")
+  batteryMah    Int?    @map("battery_mah")
+  features      String?
+  price         Decimal
+  stock         Int
+  description   String?
+  imageUrl      String? @map("image_url")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  business Business @relation(fields: [businessId], references: [id])
+
+  @@map("products") // Mapea este modelo a la tabla 'products' en la DB
+}
+
+model Message {
+  id                     BigInt  @id @default(autoincrement()) @map("id")
+  businessId             String  @map("business_id")
+  conversationId         String  @map("conversation_id")
+  senderWhatsappNumber   String? @map("sender_whatsapp_number") // Cambiado a String para consistencia si no es un ID de usuario en tu DB
+  customerWhatsappNumber String  @map("customer_whatsapp_number")
+  content                String
+  type                   String  @map("type") // 'incoming' o 'outgoing'
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  business     Business     @relation(fields: [businessId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+
+  // Opcional: para asegurar que el 'type' sea solo 'incoming' o 'outgoing' a nivel de DB
+  // @@check([type], "type IN ('incoming', 'outgoing')") // Prisma no soporta CHECK constraints directamente en los modelos, se usaría un validation en DTO
+
+  @@map("messages") // Mapea este modelo a la tabla 'messages' en la DB
+}
+
+model Conversation {
+  id                     String @id @default(uuid()) @map("id")
+  businessId             String @map("business_id")
+  customerWhatsappNumber String @map("customer_whatsapp_number")
+  context                Json?  @map("context") // jsonb en PostgreSQL
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  business Business  @relation(fields: [businessId], references: [id])
+  messages Message[]
+
+  @@map("conversations") // Mapea este modelo a la tabla 'conversations' en la DB
+}
