@@ -1,98 +1,195 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# IasApp - AI-Powered Mobile Inventory Assistant
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/postgresql-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
+![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📱 Descripción
 
-## Description
+IasApp es una solución innovadora de gestión de inventario impulsada por inteligencia artificial, diseñada específicamente para negocios de dispositivos móviles. La aplicación permite a los clientes consultar disponibilidad de productos a través de WhatsApp, utilizando un chatbot inteligente que procesa consultas en lenguaje natural y proporciona respuestas precisas sobre el inventario.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🚀 Características
 
-## Project setup
+- **Chat Inteligente**: Integración con WhatsApp Business API para comunicación directa con clientes
+- **IA Avanzada**: Utiliza Google Gemini API para procesamiento de lenguaje natural
+- **Consultas Flexibles**: Búsqueda por modelo, marca, capacidad, rango de precios y más
+- **Respuestas Contextuales**: El AI maquilla las respuestas para ofrecer información clara y profesional
+- **Base de Datos Robusta**: PostgreSQL con Prisma ORM para gestión eficiente de datos
+- **Autenticación Segura**: JWT tokens y encriptación bcryptjs para seguridad
 
-```bash
-$ pnpm install
-```
+## 🛠️ Stack Tecnológico
 
-## Compile and run the project
+### Backend
 
-```bash
-# development
-$ pnpm run start
+- **Framework**: NestJS
+- **Lenguaje**: TypeScript
+- **Base de Datos**: PostgreSQL
+- **ORM**: Prisma
+- **Autenticación**: JWT + Passport
+- **Encriptación**: bcryptjs
 
-# watch mode
-$ pnpm run start:dev
+### APIs Externas
 
-# production mode
-$ pnpm run start:prod
-```
+- **IA**: Google Gemini API
+- **Mensajería**: WhatsApp Business API / Twilio (opcional)
 
-## Run tests
+### Herramientas de Desarrollo
 
-```bash
-# unit tests
-$ pnpm run test
+- **Gestor de Paquetes**: pnpm
+- **Testing**: Jest
+- **Linting**: ESLint + Prettier
+- **Build**: SWC (Super fast TypeScript/JavaScript compiler)
 
-# e2e tests
-$ pnpm run test:e2e
+## 📋 Prerequisitos
 
-# test coverage
-$ pnpm run test:cov
-```
+- Node.js (v18 o superior)
+- pnpm
+- PostgreSQL
+- Cuenta de Google Cloud (para Gemini API)
+- WhatsApp Business API credentials
 
-## Deployment
+## 🔧 Instalación
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+1. **Clonar el repositorio**
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+git clone https://github.com/RoberthLoorDev/iasapp-nestjs.git
+cd iasapp-nestjs
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+2. **Instalar dependencias**
 
-## Resources
+```bash
+pnpm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+3. **Configurar variables de entorno**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+cp .env.example .env
+```
 
-## Support
+Editar `.env` con tus credenciales:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/iasapp"
+JWT_SECRET="your-jwt-secret"
+GEMINI_API_KEY="your-gemini-api-key"
+WHATSAPP_API_TOKEN="your-whatsapp-token"
+```
 
-## Stay in touch
+4. **Configurar base de datos**
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+# Generar cliente Prisma
+pnpm prisma generate
 
-## License
+# Ejecutar migraciones
+pnpm prisma migrate dev
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# (Opcional) Seed inicial
+pnpm prisma db seed
+```
+
+5. **Ejecutar la aplicación**
+
+```bash
+# Desarrollo
+pnpm start:dev
+
+# Producción
+pnpm build
+pnpm start:prod
+```
+
+## 📡 Flujo de Trabajo
+
+1. **Cliente envía mensaje** → WhatsApp
+2. **Webhook recibe mensaje** → Backend NestJS
+3. **Procesamiento IA** → Gemini extrae información (modelo, marca, precio, etc.)
+4. **Consulta base de datos** → PostgreSQL vía Prisma
+5. **Formateo de respuesta** → Gemini maquilla la respuesta
+6. **Envío de respuesta** → WhatsApp al cliente
+
+## 🗂️ Estructura del Proyecto
+
+```
+src/
+├── auth/           # Autenticación y autorización
+├── chat/           # Lógica del chatbot
+├── inventory/      # Gestión de inventario
+├── whatsapp/       # Integración WhatsApp
+├── gemini/         # Servicios de IA
+├── common/         # Utilidades compartidas
+└── main.ts         # Punto de entrada
+```
+
+## 📝 Ejemplos de Uso
+
+### Consultas Soportadas
+
+```
+👤 Cliente: "¿Tienen iPhone 15 Pro disponible?"
+🤖 Bot: "¡Hola! Sí, tenemos iPhone 15 Pro disponible en las siguientes opciones:
+- iPhone 15 Pro 128GB - $999
+- iPhone 15 Pro 256GB - $1,099
+¿Te interesa alguna capacidad específica?"
+
+👤 Cliente: "Necesito un Samsung entre $300 y $500"
+🤖 Bot: "Encontré estas opciones Samsung en tu rango de precio:
+- Galaxy A54 256GB - $449
+- Galaxy A34 128GB - $349
+- Galaxy S23 FE 128GB - $499
+¿Cuál te llama más la atención?"
+```
+
+## 🧪 Testing
+
+```bash
+# Tests unitarios
+pnpm test
+
+# Tests con coverage
+pnpm test:cov
+
+# Tests e2e
+pnpm test:e2e
+
+# Tests en modo watch
+pnpm test:watch
+```
+
+## 🚀 Deployment
+
+```bash
+# Build para producción
+pnpm build
+
+# Ejecutar migraciones en producción
+pnpm prisma migrate deploy
+
+# Iniciar en producción
+pnpm start:prod
+```
+
+## 📄 Scripts Disponibles
+
+- `pnpm start:dev` - Desarrollo con hot reload
+- `pnpm build` - Build para producción
+- `pnpm start:prod` - Ejecutar en producción
+- `pnpm test` - Ejecutar tests
+- `pnpm lint` - Ejecutar linter
+- `pnpm format` - Formatear código
+
+## 🔒 Seguridad
+
+- Encriptación de contraseñas con bcryptjs
+- Autenticación JWT
+- Validación de datos con class-validator
+- Variables de entorno para credenciales sensibles
+
+---
+
+**Desarrollado con ❤️ por [RoberthLoorDev](https://github.com/RoberthLoorDev)**
