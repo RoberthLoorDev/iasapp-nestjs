@@ -3,11 +3,15 @@ import { PrismaService } from 'src/common/database/prisma/prisma.service';
 import { RegisterBusinessDto } from './dto/register-business.dto';
 import * as bcrypt from 'bcryptjs';
 import { LoginBusinessDto } from './dto/login-business.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
      //inyectamos prisma service
-     constructor(private readonly prisma: PrismaService) {}
+     constructor(
+          private readonly prisma: PrismaService,
+          private readonly jwtService: JwtService, // inyectamos JwtService para generar tokens JWT
+     ) {}
 
      //metodo para registrar un usuario
      async register(registerDto: RegisterBusinessDto) {
@@ -73,6 +77,9 @@ export class AuthService {
           }
 
           //agregar logica para la generacion del token JWT
+          const payload = { sub: business.id, email: business.email, name: business.name }; // 'sub' es la convención para el subject (ID de usuario),
+          //firmamos el payload con la clave secreta
+          const accessToken = this.jwtService.sign(payload);
 
           //por ahora, solo devolver informacion basica
           return {
@@ -82,6 +89,7 @@ export class AuthService {
                firstName: business.firstName,
                lastName: business.lastName,
                isEmailVerified: business.isEmailVerified,
+               accessToken, // devolvemos el token JWT
           };
      }
 }
