@@ -12,6 +12,7 @@ async function bootstrap() {
                whitelist: true, //elimina las propiedades que no están definidas en los DTOs
                forbidNonWhitelisted: true, //lanza un error si se envían propiedades no definidas en los DTOs
                transform: true, //transforma los datos entrantes a los tipos definidos en los DTOs
+               skipMissingProperties: true, //lanza un error si faltan propiedades requeridas en los DTOs
           }),
      );
 
