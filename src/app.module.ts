@@ -5,9 +5,10 @@ import { DatabaseModule } from './common/database/database.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { ConversationsModule } from './conversations/conversations.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
-     imports: [DatabaseModule, AuthModule, ProductsModule, ConversationsModule],
+     imports: [DatabaseModule, AuthModule, ProductsModule, ConversationsModule, WebhookModule],
      controllers: [AppController],
      providers: [AppService],
 })
