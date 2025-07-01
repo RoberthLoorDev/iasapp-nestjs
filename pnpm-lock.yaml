@@ -41,6 +41,9 @@ importers:
       class-validator:
         specifier: ^0.14.2
         version: 0.14.2
+      libphonenumber-js:
+        specifier: ^1.12.9
+        version: 1.12.9
       passport:
         specifier: ^0.7.0
         version: 0.7.0

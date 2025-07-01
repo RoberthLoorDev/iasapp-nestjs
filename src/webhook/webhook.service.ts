@@ -15,8 +15,8 @@ export class WebhookService {
           const VERIFY_TOKEN = this.configService.get<string>('VERIFY_TOKEN');
 
           // comprobar si el token y el modo son correctos
-          if (mode === 'suscribe' && token === VERIFY_TOKEN) {
-               console.log('Webhook verified successfully and suscribed to events.');
+          if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+               console.log('Webhook verified successfully and subscribe to events.');
                return Promise.resolve(challenge); // responde el challenge para verificar el webhook
           }
 
