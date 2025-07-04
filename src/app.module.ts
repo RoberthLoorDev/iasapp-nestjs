@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DatabaseModule } from './common/database/database.module';
 import { AuthModule } from './auth/auth.module';
-import { ProductsModule } from './products/products.module';
-import { ConversationsModule } from './conversations/conversations.module';
-import { WebhookModule } from './webhook/webhook.module';
-import { BusinessService } from './business/business.service';
 import { BusinessModule } from './business/business.module';
+import { DatabaseModule } from './common/database/database.module';
+import { ConversationsModule } from './conversations/conversations.module';
+import { ProductsModule } from './products/products.module';
+import { WebhookModule } from './webhook/webhook.module';
+import { WhatsappModule } from './whatsapp/whatsapp.module';
 
 @Module({
-     imports: [DatabaseModule, AuthModule, ProductsModule, ConversationsModule, WebhookModule, BusinessModule],
+     imports: [DatabaseModule, AuthModule, ProductsModule, ConversationsModule, WebhookModule, BusinessModule, WhatsappModule],
      controllers: [AppController],
-     providers: [AppService, BusinessService],
+     providers: [AppService],
 })
 export class AppModule {}
