@@ -2,12 +2,15 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/common/database/prisma/prisma.service';
 import { WebhookPayload } from './webhook.types';
+import { normalizePhoneNumber } from 'src/utils/phone-number.utils';
+import { BusinessService } from 'src/business/business.service';
 
 @Injectable()
 export class WebhookService {
      constructor(
           private readonly configService: ConfigService,
           private readonly prisma: PrismaService,
+          private readonly businessService: BusinessService,
      ) {}
 
      //verificaar el token del webhook de facebook
@@ -49,13 +52,13 @@ export class WebhookService {
                     const customerWhatsAppNumber = message.from;
                     const businessWhatsAppNumber = metadata.display_phone_number;
                     const content = message.text?.body;
-
-                    console.log(`Processing message from ${customerWhatsAppNumber}: "${content}"`);
+                    const normalizeBusinessWhatsappNumber = normalizePhoneNumber(businessWhatsAppNumber); // Normalizamos el número de WhatsApp del negocio
 
                     // Guardar el mensaje en la base de datos
-                    const business = await this.prisma.business.findUnique({
-                         where: { whatsappPhoneNumber: businessWhatsAppNumber },
-                    });
+                    let business: { id: string } | null = null;
+                    if (normalizeBusinessWhatsappNumber) {
+                         business = await this.businessService.getBusinessByWhatsappPhoneNumber(normalizeBusinessWhatsappNumber);
+                    }
 
                     if (!business) {
                          console.error(`Business not found for phone number: ${businessWhatsAppNumber}`);

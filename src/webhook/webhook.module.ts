@@ -3,6 +3,7 @@ import { WebhookController } from './webhook.controller';
 import { WebhookService } from './webhook.service';
 import { DatabaseModule } from 'src/common/database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { BusinessService } from 'src/business/business.service';
 
 @Module({
      imports: [
@@ -10,6 +11,6 @@ import { ConfigModule } from '@nestjs/config';
           ConfigModule, //necesario para la configuración de variables de entorno
      ],
      controllers: [WebhookController],
-     providers: [WebhookService],
+     providers: [WebhookService, BusinessService],
 })
 export class WebhookModule {}
