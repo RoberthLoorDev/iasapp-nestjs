@@ -1,9 +1,10 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/common/database/prisma/prisma.service';
 import { RegisterBusinessDto } from './dto/register-business.dto';
 import * as bcrypt from 'bcryptjs';
 import { LoginBusinessDto } from './dto/login-business.dto';
 import { JwtService } from '@nestjs/jwt';
+import { normalizePhoneNumber } from 'src/utils/phone-number.utils';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,10 @@ export class AuthService {
      //metodo para registrar un usuario
      async register(registerDto: RegisterBusinessDto) {
           const { email, password, firstName, lastName, address, phoneNumber } = registerDto;
+
+          //normalizar el numero de telefono del negocio
+          const normalizedPhoneNumber = phoneNumber ? normalizePhoneNumber(phoneNumber, 'EC') : null;
+          if (!normalizedPhoneNumber) throw new BadRequestException('Invalid phone number format');
 
           //verificar si el usuario ya existe por medio del email
           const existingBusiness = await this.prisma.business.findUnique({
@@ -38,7 +43,7 @@ export class AuthService {
                     firstName,
                     lastName,
                     address,
-                    phoneNumber,
+                    phoneNumber: normalizedPhoneNumber,
                },
 
                //seleccionamos los campos que podemos retornar al crear el negocio
