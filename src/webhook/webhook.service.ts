@@ -4,6 +4,7 @@ import { PrismaService } from 'src/common/database/prisma/prisma.service';
 import { WebhookPayload } from './webhook.types';
 import { normalizePhoneNumber } from 'src/utils/phone-number.utils';
 import { BusinessService } from 'src/business/business.service';
+import { AiService } from 'src/ai/ai.service';
 
 @Injectable()
 export class WebhookService {
@@ -11,6 +12,7 @@ export class WebhookService {
           private readonly configService: ConfigService,
           private readonly prisma: PrismaService,
           private readonly businessService: BusinessService,
+          private readonly aiService: AiService,
      ) {}
 
      //verificaar el token del webhook de facebook
@@ -40,6 +42,9 @@ export class WebhookService {
 
           const messages = changes.value?.messages;
           const metadata = changes.value?.metadata;
+
+          // extraer el id del telefono del negocio
+          const businessPhoneNumberId = metadata?.phone_number_id;
 
           if (!messages || !metadata) {
                console.log('No messages or metadata found in the webhook event');
@@ -94,6 +99,22 @@ export class WebhookService {
                     });
 
                     console.log(`Incoming message from ${customerWhatsAppNumber} saved successfully.`);
+
+                    try {
+                         const businessAccessToken = this.configService.get<string>('META_WA_ACCESS_TOKEN');
+                         if (!businessAccessToken) {
+                              throw new Error('META_WA_ACCESS_TOKEN is not defined in the environment variables.');
+                         }
+
+                         await this.aiService.processUserMessage(
+                              content || '',
+                              customerWhatsAppNumber,
+                              businessPhoneNumberId,
+                              businessAccessToken,
+                         );
+                    } catch (error) {
+                         console.error(`Error processing message from ${customerWhatsAppNumber}:`, error);
+                    }
                }
           }
      }
