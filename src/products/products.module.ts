@@ -7,5 +7,6 @@ import { DatabaseModule } from 'src/common/database/database.module';
      imports: [DatabaseModule],
      providers: [ProductsService],
      controllers: [ProductsController],
+     exports: [ProductsService], // Exporting ProductsService to be used in other modules
 })
 export class ProductsModule {}
