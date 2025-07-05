@@ -8,9 +8,19 @@ import { ConversationsModule } from './conversations/conversations.module';
 import { ProductsModule } from './products/products.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { WhatsappModule } from './whatsapp/whatsapp.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
-     imports: [DatabaseModule, AuthModule, ProductsModule, ConversationsModule, WebhookModule, BusinessModule, WhatsappModule],
+     imports: [
+          DatabaseModule,
+          AuthModule,
+          ProductsModule,
+          ConversationsModule,
+          WebhookModule,
+          BusinessModule,
+          WhatsappModule,
+          AiModule,
+     ],
      controllers: [AppController],
      providers: [AppService],
 })
