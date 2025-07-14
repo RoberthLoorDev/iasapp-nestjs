@@ -78,7 +78,7 @@ export class AiService {
           Eres un asistente de ventas de una tienda de telefonos. Tu única función es proporcionar información sobre los productos disponibles en la tienda.
                Reglas:
                - Si el usuario saluda, responde amablemente y luego pregunta en qué puedes ayudar con los productos.
-               - Si el usuario hace una pregunta que NO está relacionada con productos (ej. "¿Cómo estás?", "Dime un chiste", "Cuál es la capital de Francia"), debes responder amablemente que tu función es solo proporcionar información sobre los productos del negocio y que no puedes responder a otras preguntas.
+               - Si el usuario hace una pregunta que NO está relacionada con productos (ej. "¿Cómo estás?", "Dime un chiste", "Cuál es la capital de Francia"), debes decirle que si podría especificar su solicitud.
                - Si el usuario pregunta sobre productos, responde 'QUERY'.
                - Formatea tu respuesta como un JSON con las claves "responseType" (puede ser "greeting", "out_of_context", "query") y "message" (la respuesta directa o "QUERY").
 
@@ -116,7 +116,7 @@ export class AiService {
           const prompt = `
           Dado el siguiente mensaje del usuario: '${message}'.
           Tu tarea es extraer los detalles de productos mencionados (marca, modelo, RAM, almacenamiento, procesador, cámara principal, cámara frontal, batería, precio mínimo/máximo, etc.).
-          Considera posibles errores tipográficos y sugiere una corrección si es obvia.
+          Considera posibles errores tipográficos y sugiere una corrección si es obvia, por ejemplo "ciaomi" -> "Xiaomi".
           Formatea tu respuesta como un objeto JSON con las claves para cada propiedad (ej. "brand", "model", "ram", "storage", "price").
           Para precios, usa "priceGte" para mayor o igual, "priceLte" para menor o igual.
           Si encuentras una posible corrección a un nombre (ej. "ciaomi" -> "Xiaomi"), incluye un campo "corrected_query" con la sugerencia.
@@ -193,7 +193,7 @@ export class AiService {
             Genera una respuesta concisa y amigable para el cliente de WhatsApp.
             Si se encontraron productos:
             - Menciona los productos encontrados.
-            - Si hay un solo producto, proporciona todos los detalles disponibles (marca, modelo, variante, RAM, almacenamiento, cámaras, batería, precio, stock).
+            - Si hay un solo producto, proporciona todos los detalles disponibles (marca, modelo, variante, RAM, almacenamiento, cámaras, batería, precio).
             - Si hay varios productos, resume las características clave que los diferencian (ej. por qué uno es más caro que otro, como RAM, almacenamiento, variante).
             - Siempre termina preguntando si necesitas algo más o si tienes otra consulta.
 
@@ -204,9 +204,9 @@ export class AiService {
 
             Ejemplos de cómo diferenciar si hay varios productos:
             Productos:
-            - Marca: Xiaomi, Modelo: Redmi Note 13 4G, RAM: 6GB, Almacenamiento: 128GB, Precio: $249.99, Stock: 50 unidades.
-            - Marca: Xiaomi, Modelo: Redmi Note 13 Pro 5G, RAM: 8GB, Almacenamiento: 256GB, Precio: $329.99, Stock: 35 unidades.
-            Respuesta sugerida: "¡Claro! Encontramos dos variantes del Xiaomi Redmi Note 13. El modelo 4G con 6GB de RAM y 128GB de almacenamiento está en $249.99 (50 unidades). Y el Redmi Note 13 Pro 5G con 8GB de RAM y 256GB de almacenamiento está en $329.99 (35 unidades). ¿Cuál te interesa más o tienes alguna otra consulta?"
+            - Marca: Xiaomi, Modelo: Redmi Note 13 4G, RAM: 6GB, Almacenamiento: 128GB, Precio: $249.99.
+            - Marca: Xiaomi, Modelo: Redmi Note 13 Pro 5G, RAM: 8GB, Almacenamiento: 256GB, Precio: $329.99.
+            Respuesta sugerida: "¡Claro! Encontramos dos variantes del Xiaomi Redmi Note 13. El modelo 4G con 6GB de RAM y 128GB de almacenamiento está en $249.99. Y el Redmi Note 13 Pro 5G con 8GB de RAM y 256GB de almacenamiento está en $329.99 ¿Cuál te interesa más o tienes alguna otra consulta?"
 
             Productos: No se encontraron productos.
             Respuesta sugerida: "Lo siento, no encontramos productos con esas características. ¿Te gustaría buscar algo más o con otras especificaciones?"
