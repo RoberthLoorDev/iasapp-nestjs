@@ -25,7 +25,7 @@ export class AiService {
           const genAI = new GoogleGenerativeAI(this.GEMINI_API_KEY);
 
           //modelo
-          this.generativeModel = genAI.getGenerativeModel({ model: 'gemma-3-4b-it' });
+          this.generativeModel = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite-preview-06-17' });
      }
 
      //logica principal para procesar los mensajes de whatsapp
