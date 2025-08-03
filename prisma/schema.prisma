@@ -14,17 +14,18 @@ datasource db {
 // ---
 
 model Business {
-  id                  String  @id @default(uuid()) @map("id")
-  name                String
-  email               String  @unique
-  password            String
-  firstName           String? @map("first_name")
-  lastName            String? @map("last_name")
-  address             String?
-  phoneNumber         String? @map("phone_number")
-  whatsappPhoneNumber String? @unique @map("whatsapp_phone_number")
-  whatsappApiConfig   Json?   @map("whatsapp_api_config") // jsonb en PostgreSQL
-  isEmailVerified     Boolean @default(false) @map("is_email_verified")
+  id                    String  @id @default(uuid()) @map("id")
+  name                  String
+  email                 String  @unique
+  password              String
+  firstName             String? @map("first_name")
+  lastName              String? @map("last_name")
+  address               String?
+  phoneNumber           String? @map("phone_number")
+  whatsappPhoneNumber   String? @unique @map("whatsapp_phone_number")
+  whatsappApiConfig     Json?   @map("whatsapp_api_config") // jsonb en PostgreSQL
+  isEmailVerified       Boolean @default(false) @map("is_email_verified")
+  whatsappPhoneNumberId String? @map("whatsapp_phone_number_id") // ID del número de WhatsApp en la API de WhatsApp Business
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
