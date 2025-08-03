@@ -38,10 +38,9 @@ export class AiService {
           accessToken: string,
      ): Promise<void> {
           try {
-               //validar el mensaje de entrada (saludos, preguntas fuera de contexto, etc.)
                const initialResponse = await this.validateAndExtractIntent(messageText);
 
-               //si la ia decide que es un saldo o fuera de contexto, envia una respuesta directa
+               //validar el mensaje de entrada (saludos, preguntas fuera de contexto, etc.)
                if (initialResponse.responseType === 'greeting') {
                     await this.whatsappApiService.sendTextMessage(
                          toPhoneNumber,
@@ -49,9 +48,10 @@ export class AiService {
                          phoneNumberId,
                          accessToken,
                     );
-                    return; // terminamos aqui la ejecucion
+                    return;
                }
 
+               // validar si el mensaje solicita información del negocio
                if (initialResponse.responseType === 'business_info') {
                     const businessInfo = await this.businessService.getBusinessByPhoneNumberId(phoneNumberId);
 
@@ -90,7 +90,7 @@ export class AiService {
                }
 
                //maquillar la respuesta de la base de datos
-               const finalIAMessage = await this.generateFinalResponse(productsParams, dbProducts);
+               const finalIAMessage = await this.generateFinalResponse(productsParams, dbProducts as FoundProduct[]);
 
                await this.whatsappApiService.sendTextMessage(toPhoneNumber, finalIAMessage, phoneNumberId, accessToken);
           } catch (error) {
@@ -147,12 +147,15 @@ export class AiService {
           //prompt para extraer los parametros del producto
           const prompt = `
           Dado el siguiente mensaje del usuario: '${message}'.
+
           Tu tarea es extraer los detalles de productos mencionados (marca, modelo, RAM, almacenamiento, procesador, cámara principal, cámara frontal, batería, precio mínimo/máximo, etc.).
-          Considera posibles errores tipográficos y sugiere una corrección si es obvia, por ejemplo "ciaomi" -> "Xiaomi".
-          Formatea tu respuesta como un objeto JSON con las claves para cada propiedad (ej. "brand", "model", "ram", "storage", "price").
-          Para precios, usa "priceGte" para mayor o igual, "priceLte" para menor o igual.
-          Si encuentras una posible corrección a un nombre (ej. "ciaomi" -> "Xiaomi"), incluye un campo "corrected_query" con la sugerencia.
-          Si una propiedad no se menciona o no se identifica, omítela del JSON.
+
+          Instrucciones:
+          - Corrige directamente errores tipográficos en marcas o modelos sin informarlo al usuario.
+          - No incluyas campos como "corrected_query" ni hagas sugerencias.
+          - Formatea tu respuesta como un objeto JSON con las claves para cada propiedad (ej. "brand", "model", "ram", "storage", "price").
+          - Para precios, usa "priceGte" para mayor o igual, "priceLte" para menor o igual.
+          - Si una propiedad no se menciona o no se identifica, omítela del JSON.
 
           Ejemplos:
           Mensaje: "Quiero el telefono xiaomi redmi note 10 pro de 128gb"
@@ -165,9 +168,10 @@ export class AiService {
           Respuesta: {"priceLte": 400}
 
           Mensaje: "Tienes el ciaomi redmi note 14 por plus?"
-          Respuesta: {"brand": "Xiaomi", "model": "Redmi Note 14 Pro Plus", "corrected_query": "Quizás quisiste decir Xiaomi Redmi Note 14 Pro Plus."}
+          Respuesta: {"brand": "Xiaomi", "model": "Redmi Note 14 Pro Plus"}
 
-          Mensaje: "${message}"`;
+          Mensaje: "${message}"
+`;
 
           try {
                const result = await this.generativeModel.generateContent(prompt);
