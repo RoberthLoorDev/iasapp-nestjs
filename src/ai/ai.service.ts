@@ -1,9 +1,10 @@
 import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BusinessService } from 'src/business/business.service';
 import { ProductsService } from 'src/products/products.service';
-import { WhatsappApiService } from '../whatsapp/whatsapp-api/whatsapp-api.service';
 import { FoundProduct, ProductParams } from 'src/products/products.types';
+import { WhatsappApiService } from '../whatsapp/whatsapp-api/whatsapp-api.service';
 
 @Injectable()
 export class AiService {
@@ -15,6 +16,7 @@ export class AiService {
           private readonly configService: ConfigService,
           private readonly productService: ProductsService,
           private readonly whatsappApiService: WhatsappApiService,
+          private readonly businessService: BusinessService,
      ) {
           this.GEMINI_API_KEY = this.configService.get<string>('GEMINI_API_KEY') ?? '';
 
@@ -50,6 +52,32 @@ export class AiService {
                     return; // terminamos aqui la ejecucion
                }
 
+               if (initialResponse.responseType === 'business_info') {
+                    const businessInfo = await this.businessService.getBusinessByPhoneNumberId(phoneNumberId);
+
+                    if (!businessInfo) {
+                         await this.whatsappApiService.sendTextMessage(
+                              toPhoneNumber,
+                              'Lo sentimos, no tenemos información de negocio disponible en este momento.',
+                              phoneNumberId,
+                              accessToken,
+                         );
+
+                         return;
+                    }
+                    // Generamos el mensaje con Gemini
+                    const responseText = await this.generateBusinessInfoResponse({
+                         name: businessInfo.name,
+                         address: businessInfo.address ?? undefined,
+                         phoneNumber: businessInfo.phoneNumber ?? undefined,
+                         whatsappPhoneNumber: businessInfo.whatsappPhoneNumber ?? undefined,
+                         email: businessInfo.email,
+                    });
+                    await this.whatsappApiService.sendTextMessage(toPhoneNumber, responseText, phoneNumberId, accessToken);
+
+                    return;
+               }
+
                //si la ia identifico que es una pregunta de un producto, extrae los parametros
                const productsParams: ProductParams = await this.extractProductParameters(messageText);
 
@@ -80,7 +108,8 @@ export class AiService {
                - Si el usuario saluda, responde amablemente y luego pregunta en qué puedes ayudar con los productos.
                - Si el usuario hace una pregunta que NO está relacionada con productos (ej. "¿Cómo estás?", "Dime un chiste", "Cuál es la capital de Francia"), debes decirle que si podría especificar su solicitud.
                - Si el usuario pregunta sobre productos, responde 'QUERY'.
-               - Formatea tu respuesta como un JSON con las claves "responseType" (puede ser "greeting", "out_of_context", "query") y "message" (la respuesta directa o "QUERY").
+               - Si el usuario pregunta por información del negocio (ej. ubicación, contacto), responde con un mensaje cordial con la información del negocio.
+               - Formatea tu respuesta como un JSON con las claves "responseType" (puede ser "greeting", "out_of_context", "query", "business_info") y "message" (la respuesta directa o "QUERY").
 
                Ejemplos:
                Usuario: Hola
@@ -91,6 +120,9 @@ export class AiService {
 
                Usuario: Tienes el xiaomi redmi note 12?
                Respuesta: {"responseType": "query", "message": "QUERY"}
+
+               Usuario: ¿Dónde está la tienda?
+               Respuesta: {"responseType": "business_info", "message": "Nuestra tienda está ubicada en la Calle Falsa 123, Springfield."}
 
                Usuario: ${message}`;
 
@@ -149,6 +181,37 @@ export class AiService {
           } catch (error) {
                this.logger.error('Error extracting product parameters with gemini', error);
                return {}; // Return an empty object if there's an error
+          }
+     }
+
+     //logica para generar respuesta sobre informacion del negocio
+     private async generateBusinessInfoResponse(business: {
+          name: string;
+          address?: string;
+          phoneNumber?: string;
+          whatsappPhoneNumber?: string;
+          email: string;
+     }): Promise<string> {
+          const prompt = `
+          Eres un asistente virtual de una tienda que responde consultas por WhatsApp. El cliente ha preguntado por información relacionada al negocio (ubicación, contacto, etc.).
+
+          Tu tarea es generar una respuesta cordial y clara con la siguiente información:
+
+          - Nombre: ${business.name}
+          - Dirección: ${business.address ?? 'No especificada'}
+          - Teléfono: ${business.phoneNumber ?? 'No disponible'}
+          - WhatsApp: ${business.whatsappPhoneNumber ?? 'No disponible'}
+          - Email: ${business.email}
+
+          Redacta un texto breve y amigable. Termina invitando al usuario a preguntar por productos.
+`;
+          try {
+               const result = await this.generativeModel.generateContent(prompt);
+               const text = result.response.text();
+               return text.replace(/```text\n|```/g, '').trim();
+          } catch (error) {
+               this.logger.error('Error generating business info with Gemini', error);
+               throw new InternalServerErrorException('Error generando respuesta de negocio con Gemini');
           }
      }
 

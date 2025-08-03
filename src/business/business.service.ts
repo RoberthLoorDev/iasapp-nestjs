@@ -77,4 +77,37 @@ export class BusinessService {
                return updatedBusiness;
           }
      }
+
+     // Obtener informacion del negocio por medio de su id
+     async getBusinessById(businessId: string) {
+          if (!businessId) {
+               throw new BadRequestException('Business ID is required');
+          }
+          const business = await this.prisma.business.findUnique({
+               where: { id: businessId },
+          });
+
+          if (!business) {
+               throw new NotFoundException('Business not found');
+          }
+
+          return business;
+     }
+
+     // Obtener informacion del negocio por medio del whatsappPhoneNumberId
+     async getBusinessByPhoneNumberId(phoneNumberId: string) {
+          if (!phoneNumberId) {
+               throw new BadRequestException('Phone number ID is required');
+          }
+
+          const business = await this.prisma.business.findFirst({
+               where: { whatsappPhoneNumberId: phoneNumberId },
+          });
+
+          if (!business) {
+               throw new NotFoundException('Business not found');
+          }
+
+          return business;
+     }
 }
