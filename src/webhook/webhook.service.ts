@@ -31,7 +31,7 @@ export class WebhookService {
 
      //procesa los eventos del webhook de whatsapp, por ahora solo guarda los mensajes en la base de datos
      async handleWebhookEvent(body: WebhookPayload): Promise<void> {
-          console.log('Received webhook event', JSON.stringify(body, null, 2));
+          // console.log('Received webhook event', JSON.stringify(body, null, 2));
 
           //se analiza el cuerpo del evento para encontrar los mensajes
           const changes = body.entry?.[0].changes?.[0];
