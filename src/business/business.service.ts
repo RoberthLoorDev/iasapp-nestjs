@@ -4,6 +4,8 @@ import { PrismaService } from 'src/common/database/prisma/prisma.service';
 import { normalizePhoneNumber } from 'src/utils/phone-number.utils';
 import { CreateBusinessDto } from './dto/create-business.dto';
 import { UpdateWhatsappConfigDto } from './dto/update-whatsapp-config.dto';
+import { UpdateBusinessDto } from './dto/update-business.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class BusinessService {
@@ -146,5 +148,43 @@ export class BusinessService {
           }
 
           return business;
+     }
+
+     // Update a business
+     async updateBusiness(businessId: string, dto: UpdateBusinessDto) {
+          const business = await this.getBusinessById(businessId);
+
+          if (!business) {
+               throw new NotFoundException('Business not found');
+          }
+
+          const updatedBusiness = await this.prisma.business.update({
+               where: { id: businessId },
+               data: {
+                    ...dto,
+               },
+          });
+
+          return updatedBusiness;
+     }
+
+     async updatePassword(businessId: string, dto: UpdatePasswordDto) {
+          const business = await this.prisma.business.findUnique({ where: { id: businessId } });
+          if (!business) throw new NotFoundException('Business not found');
+
+          const isMatch = await bcryptjs.compare(dto.currentPassword, business.password);
+          if (!isMatch) throw new BadRequestException('Current password is incorrect');
+
+          if (dto.newPassword !== dto.confirmPassword) {
+               throw new BadRequestException('New password and confirmation do not match');
+          }
+
+          const hashedPassword = await bcryptjs.hash(dto.newPassword, 10);
+
+          return this.prisma.business.update({
+               where: { id: businessId },
+               data: { password: hashedPassword },
+               select: { id: true, email: true }, // nunca retornes la contraseña
+          });
      }
 }
