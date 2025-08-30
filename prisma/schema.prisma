@@ -33,6 +33,7 @@ model Business {
   products      Product[]
   messages      Message[]
   conversations Conversation[]
+  Sale          Sale[]
 
   @@map("businesses") // Mapea este modelo a la tabla 'businesses' en la DB
 }
@@ -59,7 +60,9 @@ model Product {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  business Business @relation(fields: [businessId], references: [id])
+  business Business   @relation(fields: [businessId], references: [id])
+  Sale     Sale[]
+  SaleItem SaleItem[]
 
   @@map("products") // Mapea este modelo a la tabla 'products' en la DB
 }
@@ -97,4 +100,49 @@ model Conversation {
   messages Message[]
 
   @@map("conversations") // Mapea este modelo a la tabla 'conversations' en la DB
+}
+
+model Sale {
+  id         String @id @default(uuid()) @map("id")
+  businessId String @map("business_id")
+
+  // Totales de la venta
+  subtotal  Decimal
+  ivaRate   Decimal @map("iva_rate")
+  ivaAmount Decimal @map("iva_amount")
+  total     Decimal @map("total")
+
+  // Cliente
+  customerCedula String  @map("customer_cedula")
+  customerName   String  @map("customer_name")
+  customerPhone  String? @map("customer_phone")
+
+  // Control interno
+  invoiceNumber String? @unique @map("invoice_number")
+  status        String  @default("completed") @map("status")
+  paymentMethod String? @map("payment_method")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  business  Business   @relation(fields: [businessId], references: [id])
+  items     SaleItem[]
+  Product   Product?   @relation(fields: [productId], references: [id])
+  productId String?
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id        String @id @default(uuid()) @map("id")
+  saleId    String @map("sale_id")
+  productId String @map("product_id")
+
+  quantity  Int
+  unitPrice Decimal @map("unit_price")
+  subtotal  Decimal
+
+  sale    Sale    @relation(fields: [saleId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("sale_items")
 }
